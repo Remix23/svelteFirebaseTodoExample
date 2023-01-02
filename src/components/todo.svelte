@@ -16,7 +16,7 @@
         creationDate = new Date();
     })
 
-    
+
 
 </script>
 
@@ -24,6 +24,10 @@
 
     <input type="text" bind:value={message} name="todo-mess" id="todo-mess">
     <input type="datetime" bind:value={deadLine} name="todo-deadline" id="todo-deadline">
+
+    <div class="controls">
+        
+    </div>
 
 </div>
 
