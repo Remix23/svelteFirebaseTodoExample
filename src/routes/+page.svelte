@@ -11,46 +11,77 @@
     //todo adding
     let message = "";
     let deadLine;
-    let priority;
+    let priority = 5;
 
     let maxId;
 
     // options
     let saveLocal = true;
 
-    let user = auth.currentUser;
+    $: userName = "";
+    let tds;
 
-    onAuthStateChanged(() => {
-        
+    todos.subscribe (val => {
+        tds = Array.from(val);
+
+        console.log(tds)
+    })
+
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            userName = user.email;
+        } else {
+            userName = "";
+        }
     })
 
     onMount (() => {
-        const loaded = localStorage.getItem("todos") || "[]";
-        console.log(loaded);
+        const loaded = localStorage.getItem("todos") || [];
         todos.set(JSON.parse(loaded));
 
-        maxId = localStorage.getItem("maxId") || 0;
+        maxId = localStorage.getItem(   "maxId") || 0;
     })
 
     const saveToLocal = () => {
+        if (typeof window === "undefined") return 
+
         const toSave = JSON.stringify(todos);
         localStorage.setItem("todos", toSave);
 
         localStorage.setItem("maxId", maxId);
     }
 
+    const validateTodo = () => {
+        if (message === "") return false;
+        if (deadLine === "undefinied") return false;
+        if (priority === "undefinied") return false;
+
+        return true;
+    }
+
     const addTodo = () => {
+        // validate
+
+        if (!validateTodo()) return 
+
+        let now = new Date();
+        let day = now.getDate();
+        let month = now.getMonth();
+        let year = now.getFullYear();
+
         const todo = {
             "id" : maxId,
             "message" : message,
             "comleted" : false,
             "deadLine" : deadLine,
             "priority" : priority,
-            "creationDate" : new Date(),
+            "creationDate" : `${day}:${month}:${year}`,
             "completionDate" : null
         };
 
-        todos.set([...todos, todo]);
+        console.table(todo)
+
+        todos.set([...tds, todo]);
 
         maxId++;
     }
@@ -66,10 +97,10 @@
 
 
 <div class="controls">
-    {#if user}
+    {#if userName === ""}
         <Authenticator/>
     {:else}
-        <Profile/>
+        <Profile userName={userName}/>
 
     {/if}
 </div>
@@ -81,12 +112,12 @@
     <input type="range" name="priority-input" id="priority-input" min="0" max="10" step="1" bind:value={priority}>
 
     <!-- google icon for adding -->
-    <span></span>
+    <button on:click={addTodo} ><span></span></button>
 
 </div>
 
 <div class="todos">
-    {#each $todos as td}
+    {#each tds as td}
         <Todo {td} />
     {/each}
 
@@ -96,3 +127,24 @@
     <input type="checkbox" name="save-local" id="save-local" bind:checked={saveLocal}>
 </div>
 
+<style>
+
+    .controls {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+    }
+
+
+
+    .todos {
+        background-color: blue;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50% -50%);
+    }
+
+</style>

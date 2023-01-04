@@ -2,6 +2,7 @@
 
     import { auth, db } from "src/js/firebase";
     import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+  import { collection } from "firebase/firestore/lite";
 
     let pass = ""
     let passRepeat = "";
@@ -16,10 +17,13 @@
 
     const login = () => {
 
-        if (!validateEmail()) return false;
+        if (!validateEmail()) return;
 
         signInWithEmailAndPassword(auth, email, pass)
             .then ( userCredentials => {
+                console.log(userCredentials.user.email)
+
+                console.log(auth.currentUser)
             })
             .catch ( err => {
 
@@ -28,15 +32,17 @@
 
     const sigin = () => {
 
-        if (!validateEmail()) return false;
-        if (pass.trim() !== passRepeat.trim()) return false;
+        if (!validateEmail()) return;
+        if (pass.trim() !== passRepeat.trim()) return;
+
+        console.log("signing in")
 
         createUserWithEmailAndPassword(auth, email, pass)
             .then( userCredentials => {
-
+                console.log(userCredentials.user.email)
             })
             .catch ( err => {
-
+                console.log(err)
             });
     }
 
@@ -61,3 +67,19 @@
     </div>
 
 </div>
+
+<style>
+
+    .options {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .form {
+        margin : 0 0 100px
+    }
+
+</style>
