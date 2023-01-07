@@ -53,8 +53,7 @@
 
     const validateTodo = () => {
         if (message === "") return false;
-        if (deadLine === "undefinied") return false;
-        if (priority === "undefinied") return false;
+        if (deadLine === "null") return false;
 
         return true;
     }
@@ -62,20 +61,22 @@
     const addTodo = () => {
         // validate
 
-        if (!validateTodo()) return 
+        if (!validateTodo()) return;
 
         let now = new Date();
         let day = now.getDate();
-        let month = now.getMonth();
+        let month = now.getMonth() + 1;
         let year = now.getFullYear();
+
+        if (month < 10) month = "0" + month.toString()
 
         const todo = {
             "id" : maxId,
             "message" : message,
-            "comleted" : false,
+            "completed" : false,
             "deadLine" : deadLine,
             "priority" : priority,
-            "creationDate" : `${day}:${month}:${year}`,
+            "creationDate" : `${year}-${month}-${day}`,
             "completionDate" : null
         };
 
@@ -106,19 +107,27 @@
 </div>
 
 <div class="adding">
-
-    <input type="text" bind:value={message} >
+    <label for="mess-input">What do you need to do: </label>
+    <input type="text" bind:value={message} name="mess-input" id="mess-input">
+    
+    <label for="deadline-input">Enter deadline: </label>
     <input type="date" name="deadline-input" id="deadline-input" bind:value={deadLine}>
+    
+    <label for="priority-input">Enter task's priority [{priority}]</label>
     <input type="range" name="priority-input" id="priority-input" min="0" max="10" step="1" bind:value={priority}>
 
     <!-- google icon for adding -->
-    <button on:click={addTodo} ><span></span></button>
+    <button on:click={addTodo} >
+        <span class="material-symbols-outlined">
+            add
+        </span>
+    </button>
 
 </div>
 
 <div class="todos">
     {#each tds as td}
-        <Todo {td} />
+        <Todo {...td} />
     {/each}
 
 </div>
@@ -137,14 +146,23 @@
 
     }
 
-
-
     .todos {
-        background-color: blue;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50% -50%);
+        transform: translate(-50%, -50%);
+        min-height: 30%;
+        min-width: 30%;
+    }
+
+    .adding {
+        position: fixed;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 300px;
     }
 
 </style>

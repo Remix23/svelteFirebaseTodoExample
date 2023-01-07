@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import { todos } from "src/js/states";
 
+    export let id;
     export let message = "";
     export let completed = false;
     export let deadLine;
@@ -27,7 +28,7 @@
 
     <div class="controls">
         <!-- edit google icon -->
-        <span on:click={() => {edit = !edit}}></span>
+        <button on:click={() => {edit = !edit}}><span ></span></button>
 
         <!-- delete google icon -->
         <span></span>
@@ -36,5 +37,9 @@
 </div>
 
 <style>
+
+    .present input {
+        
+    }
 
 </style>
